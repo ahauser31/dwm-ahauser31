@@ -8,12 +8,12 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
 
-static const char col_bg[]       = "#2E3440";
-static const char col_norm[]       = "#D8DEE9";
-static const char col_sel[]       = "#81A1C1";
-static const char col_iact[]       = "#4C566A";
-static const char col_border_norm[]       = "#2E3440";
-static const char col_border_sel[]        = "#81A1C1";
+static const char col_bg[]          = "#2E3440";
+static const char col_norm[]        = "#4C566A";   //"#D8DEE9";
+static const char col_sel[]         = "#81A1C1";
+static const char col_iact[]        = "#3B4252";   //"#4C566A";
+static const char col_border_norm[] = "#2E3440";
+static const char col_border_sel[]  = "#81A1C1";
 
 static const unsigned int baralpha = 0xd0;
 static const unsigned int borderalpha = OPAQUE;
