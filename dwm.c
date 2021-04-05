@@ -204,7 +204,7 @@ static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
-static void spawn(const Arg *arg);
+/* static void spawn(const Arg *arg); */
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void togglefloating(const Arg *arg);
@@ -238,7 +238,6 @@ static pid_t winpid(Window w);
 
 /* variables */
 static const char broken[] = "broken";
-static char stext[256];
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh, showbar;			 /* bar variables TODO: set them via signals from bar app */
@@ -1142,8 +1141,7 @@ propertynotify(XEvent *e)
 	XPropertyEvent *ev = &e->xproperty;
 
 	if ((ev->window == root) && (ev->atom == XA_WM_NAME)) {
-		if (!fake_signal())
-			updatestatus();
+		fake_signal();
 	}
 	else if (ev->state == PropertyDelete)
 		return; /* ignore */
@@ -1525,19 +1523,19 @@ sigchld(int unused)
 	}
 }
 
-void
-spawn(const Arg *arg)
-{
-	if (fork() == 0) {
-		if (dpy)
-			close(ConnectionNumber(dpy));
-		setsid();
-		execvp(((char **)arg->v)[0], (char **)arg->v);
-		fprintf(stderr, "dwm: execvp %s", ((char **)arg->v)[0]);
-		perror(" failed");
-		exit(EXIT_SUCCESS);
-	}
-}
+/* void */
+/* spawn(const Arg *arg) */
+/* { */
+	/* if (fork() == 0) { */
+		/* if (dpy) */
+			/* close(ConnectionNumber(dpy)); */
+		/* setsid(); */
+		/* execvp(((char **)arg->v)[0], (char **)arg->v); */
+		/* fprintf(stderr, "dwm: execvp %s", ((char **)arg->v)[0]); */
+		/* perror(" failed"); */
+		/* exit(EXIT_SUCCESS); */
+	/* } */
+/* } */
 
 void
 tag(const Arg *arg)
@@ -2051,7 +2049,7 @@ wintomon(Window w)
 {
 	int x, y;
 	Client *c;
-	Monitor *m;
+	/* Monitor *m; */
 
 	if (w == root && getrootptr(&x, &y))
 		return recttomon(x, y, 1, 1);
