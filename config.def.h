@@ -53,7 +53,8 @@ static const int decorhints  = 1;    /* 1 means respect decoration hints */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
+	{ "|M|",      centeredmaster },		/* first entry is default */
+	{ "[]=",      tile },
 	{ "[M]",      monocle },
 	// { "[@]",      spiral },
 	// { "[\\]",     dwindle },
@@ -64,7 +65,6 @@ static const Layout layouts[] = {
 	// { "###",      nrowgrid },
 	// { "---",      horizgrid },
 	// { ":::",      gaplessgrid },
-	{ "|M|",      centeredmaster },
 	// { ">M>",      centeredfloatingmaster },
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ NULL,       NULL },
