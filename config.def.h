@@ -82,7 +82,6 @@ static Signal signals[] = {
 	/* signum           function */
 	{ "focusstack",     focusstack },
 	{ "setmfact",       setmfact },
-	{ "togglebar",      togglebar },
 	{ "incnmaster",     incnmaster },
 	{ "togglefloating", togglefloating },
 	{ "focusmon",       focusmon },
@@ -102,4 +101,6 @@ static Signal signals[] = {
 	{ "quit",           quit },
 	{ "setlayout",      setlayout },
 	{ "setlayoutex",    setlayoutex },
+	{ "incrgaps",    		incrgaps },
+	{ "defaultgaps",    defaultgaps },
 };
