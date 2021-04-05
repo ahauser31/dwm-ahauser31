@@ -103,4 +103,5 @@ static Signal signals[] = {
 	{ "setlayoutex",    setlayoutex },
 	{ "incrgaps",    		incrgaps },
 	{ "defaultgaps",    defaultgaps },
+	{ "togglegaps",     togglegaps },
 };
