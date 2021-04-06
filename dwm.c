@@ -57,7 +57,7 @@
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
-#define TAGMASK                 ((1 << numtags)) - 1)
+#define TAGMASK                 ((1 << NUMTAGS)) - 1)
 #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
 
 #define MWM_HINTS_FLAGS_FIELD       0
@@ -287,6 +287,8 @@ static xcb_connection_t *xcon;
 #if !PERTAG_PATCH
 static int enablegaps = 1;
 #endif // PERTAG_PATCH
+
+static const int numtags = NUMTAGS;
 
 struct Pertag {
 	unsigned int curtag, prevtag; /* current and previous tag */

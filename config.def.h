@@ -31,7 +31,7 @@ static const char *const autostart[] = {
 
 /* tagging */
 // static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-static const int numtags = 9;
+#define NUMTAGS 9
 
 static const Rule rules[] = {
 	/* xprop(1):
