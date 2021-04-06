@@ -30,6 +30,18 @@ static const char *const autostart[] = {
 	NULL /* terminate */
 };
 
+typedef struct {
+	const char *name;
+	const void *cmd;
+} Sp;
+const char *spcmd1[] = {"st", "-n", "spterm", "-g", "120x34", NULL };
+const char *spcmd2[] = {"st", "-n", "spbc", "-g", "80x20", "-e", "bc", "-lq", NULL };
+static Sp scratchpads[] = {
+	/* name          cmd  */
+	{"spterm",      spcmd1},
+	{"spbc",        spcmd2},
+};
+
 /* tagging */
 // static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 #define NUMTAGS 9
@@ -39,11 +51,13 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     instance  title           tags mask  iscentered  isfloating  isfreesize   isterminal  noswallow  issticky   monitor */
-	{ "Gimp",    NULL,     NULL,           0,         0,          1,          1,           0,           0,        0,         -1 },
-	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          0,           0,          -1,        0,         -1 },
-	{ "St",      NULL,     NULL,           0,         0,          0,          0,           1,           0,        0,         -1 },
-	{ NULL,      NULL,     "Event Tester", 0,         0,          0,          0,           0,           1,        0,         -1 }, /* xev */
+	/* class     instance     title           tags mask  iscentered  isfloating  isfreesize   isterminal  noswallow  issticky   monitor */
+	{ "Gimp",    NULL,        NULL,             0,         0,          1,          1,           0,           0,        0,         -1 },
+	{ "Firefox", NULL,        NULL,             1 << 8,    0,          0,          0,           0,          -1,        0,         -1 },
+	{ "St",      NULL,        NULL,             0,         0,          0,          0,           1,           0,        0,         -1 },
+	{ NULL,      NULL,        "Event Tester",   0,         0,          0,          0,           0,           1,        0,         -1 }, /* xev */
+	{ NULL,		    "spterm",		NULL,          		0,	    	 1,          1,			     0,           0,           0,        1,         -1 },
+	{ NULL,		    "spbc",     NULL,          		0,    		 1,			     1,          0,           0,           0,        1,         -1 },
 };
 
 /* layout(s) */

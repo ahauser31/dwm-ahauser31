@@ -206,13 +206,14 @@ static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
-/* static void spawn(const Arg *arg); */
+static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void togglesticky(const Arg *arg);
 static void toggleview(const Arg *arg);
+static void togglescratch(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
 static void unmanage(Client *c, int destroyed);
 static void unmapnotify(XEvent *e);
@@ -1518,19 +1519,19 @@ sigchld(int unused)
 	}
 }
 
-/* void */
-/* spawn(const Arg *arg) */
-/* { */
-	/* if (fork() == 0) { */
-		/* if (dpy) */
-			/* close(ConnectionNumber(dpy)); */
-		/* setsid(); */
-		/* execvp(((char **)arg->v)[0], (char **)arg->v); */
-		/* fprintf(stderr, "dwm: execvp %s", ((char **)arg->v)[0]); */
-		/* perror(" failed"); */
-		/* exit(EXIT_SUCCESS); */
-	/* } */
-/* } */
+void
+spawn(const Arg *arg)
+{
+	if (fork() == 0) {
+		if (dpy)
+			close(ConnectionNumber(dpy));
+		setsid();
+		execvp(((char **)arg->v)[0], (char **)arg->v);
+		fprintf(stderr, "dwm: execvp %s", ((char **)arg->v)[0]);
+		perror(" failed");
+		exit(EXIT_SUCCESS);
+	}
+}
 
 void
 tag(const Arg *arg)
@@ -1584,6 +1585,28 @@ togglesticky(const Arg *arg)
 		return;
 	selmon->sel->issticky = !selmon->sel->issticky;
 	arrange(selmon);
+}
+
+void
+togglescratch(const Arg *arg)
+{
+	Client *c;
+	Arg sparg = {.v = scratchpads[arg->ui].cmd};
+
+	for (c = selmon->clients; c && !(strcmp(c->name, scratchpads[arg->ui].name) == 0); c = c->next);
+	if (c) {
+		/* scratchpad found, toggle it */
+		c->tags = 0;
+		c->issticky = !c->issticky;
+
+		if(c->issticky)
+			focus(c);
+
+		arrange(selmon);
+	} else {
+		/* scratchpad not found, create it */
+		spawn(&sparg);
+	}
 }
 
 void
