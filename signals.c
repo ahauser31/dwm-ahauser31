@@ -1,4 +1,4 @@
-static void  setlayoutex(const Arg *arg);
+static void setlayoutex(const Arg *arg);
 static void viewex(const Arg *arg);
 static void viewall(const Arg *arg);
 static void toggleviewex(const Arg *arg);
