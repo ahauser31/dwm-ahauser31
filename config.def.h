@@ -124,5 +124,6 @@ static Signal signals[] = {
 	{ "focusmaster",    focusmaster },
 	{ "shiftview",      shiftview },
 	{ "togglesticky",   togglesticky },
+	{ "togglescratch",  togglescratch },
 };
 
