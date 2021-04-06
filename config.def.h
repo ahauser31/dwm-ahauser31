@@ -105,4 +105,5 @@ static Signal signals[] = {
 	{ "defaultgaps",    defaultgaps },
 	{ "togglegaps",     togglegaps },
 	{ "focusmaster",    focusmaster },
+	{ "shiftview",      shiftview },
 };
