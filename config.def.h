@@ -26,8 +26,8 @@ static const char *colors[][3]      = {
 
 static const char *const autostart[] = {
 	"sxhkd", NULL,
-  "picom", "-b", "--config", "~/.config/picom/picom.conf", NULL,
-	"wallpaper_reddit", "|", "xargs", "hsetroot", "-cover", NULL,
+  "picom", "-b", NULL,
+	"/bin/sh", "-c", "$HOME/.local/scripts/wallpaper_reddit | xargs hsetroot -cover", NULL,
 	NULL /* terminate */
 };
 
