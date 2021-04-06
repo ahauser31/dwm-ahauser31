@@ -46,6 +46,9 @@ install: all
 	mkdir -p ${DESTDIR}${PREFIX}/share/xsessions
 	cp -f dwm.desktop ${DESTDIR}${PREFIX}/share/xsessions
 	chmod 644 ${DESTDIR}${PREFIX}/share/xsessions/dwm.desktop
+	mkdir -p ~/.config/sxhkd
+	cp -f sxhkdrc ~/.config/sxhkd
+	chmod 644 ~/.config/sxhkd/sxhkdrc
 
 uninstall:
 	rm -f ${DESTDIR}${PREFIX}/bin/dwm\

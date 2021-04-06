@@ -1,0 +1,118 @@
+## application spawning
+
+# Launch rofi
+super + r
+	rofi -no-lazy-grab -show drun -modi drun -theme $HOME/.config/rofi/launchers/misc/launchpad
+
+# Launch terminal
+super + Return
+	st
+
+# Launch browser
+super + b
+	firefox
+
+# Launch file manager
+super + e
+	fish -c lf
+
+
+## hotkeys
+
+# Brightness
+# Audio volume up/down and mute
+# Audio song control: play, stop/pause, next, prev
+# Screenshot fullscreen / area and save / copy clipboard
+
+
+## dwm
+
+# Toggle scratchpad terminal
+super + grave
+	dwmc togglescratch 0
+
+# Toggle scratchpad calculator
+super + o
+	dwmc togglescratch 1
+
+# Focus master client
+super + space
+	dwmc focusmaster
+
+# Focus previous / next window
+super + {k,j}
+	dwmc focusstack {-,+}1
+
+# Decrease / Increase master area size
+super + {h,l}
+	dwmc setmfact {-,+}0.05
+
+# Switches master with focused slave window
+super + s
+	dwmc zoom
+
+# Set layout centeredmaster / tile / monocle / floating
+super + {c,t,m,f}
+	dwmc setlayoutex {0,1,2,3}
+
+# Toggle floating for selected window
+super + shift + f
+	dwmc togglefloating
+
+# Toggle sticky for selected window
+super + shift + s
+	dwmc togglesticky
+
+# Decrease / Increase gaps
+super + {d,i}
+	dwmc incrgaps {-,+}2
+
+# Reset gaps to default
+super + g
+	dwmc defaultgaps
+
+# Toggle gaps on / off
+super + ctrl + g
+	dwmc togglegaps
+
+# View all windows with the n-th tag
+super + {1-9}
+	dwmc viewex {0-8}
+
+# Apply n-th tag to selected window
+super + shift + {1-9}
+	dwmc tagex {0-8}
+
+# Add / Remove n-th tag to / from selected window
+super + ctrl + {1-9}
+	dwmc toggletagex {0-8}
+
+# Add / Remove all windows with n-th tag to / from view
+super + ctrl + shift + {1-9}
+	dwmc toggleviewex {0-8}
+
+# View all windows with any tag
+super + shift + 0
+	dwmc viewall
+
+# Go to previous / next tag
+super + {p,n}
+	dwmc shiftview {-,+}1
+
+# Go to previously selected tag
+super + 0
+	dwmc view
+
+# Close focused client
+super + q
+	dwmc killclient
+
+# Quit dwm
+super + shift + q
+	dwmc quit
+
+## status bar
+
+# Toggle the statusbar
+super + ctrl + b
+	dwmc togglebar
