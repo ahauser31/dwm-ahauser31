@@ -107,3 +107,4 @@ static Signal signals[] = {
 	{ "focusmaster",    focusmaster },
 	{ "shiftview",      shiftview },
 };
+
