@@ -147,7 +147,7 @@ typedef struct {
 	int isfreesize;
 	int isterminal;
 	int noswallow;
-	int issticky
+	int issticky;
 	int monitor;
 } Rule;
 
