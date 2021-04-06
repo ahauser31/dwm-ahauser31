@@ -50,7 +50,7 @@ static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 static const int decorhints  = 1;    /* 1 means respect decoration hints */
 
-#define PERTAG_PATCH
+#define PERTAG_PATCH 1
 #include "vanitygaps.c"
 
 static const Layout layouts[] = {

@@ -268,9 +268,6 @@ static Window root, wmcheckwin;
 
 static xcb_connection_t *xcon;
 
-/* configuration, allows nested code to access above variables */
-#include "config.h"
-
 struct Pertag {
 	unsigned int curtag, prevtag; /* current and previous tag */
 	int nmasters[LENGTH(tags) + 1]; /* number of windows in master area */
@@ -280,6 +277,9 @@ struct Pertag {
 	int showbars[LENGTH(tags) + 1]; /* display bar for the current tag */
 	int enablegaps[LENGTH(tags) + 1]; /* enable gaps for the current tag */
 };
+
+/* configuration, allows nested code to access above variables */
+#include "config.h"
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
 struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
