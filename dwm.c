@@ -1719,7 +1719,6 @@ updategeom(void)
 					m->my = m->wy = unique[i].y_org;
 					m->mw = m->ww = unique[i].width;
 					m->mh = m->wh = unique[i].height;
-					updatebarpos(m);
 				}
 		} else { /* less monitors available nn < n */
 			for (i = nn; i < n; i++) {
@@ -1747,7 +1746,6 @@ updategeom(void)
 			dirty = 1;
 			mons->mw = mons->ww = sw;
 			mons->mh = mons->wh = sh;
-			updatebarpos(mons);
 		}
 	}
 	if (dirty) {
