@@ -613,7 +613,7 @@ configure(Client *c)
 void
 configurenotify(XEvent *e)
 {
-	Monitor *m;
+	/* Monitor *m; */
 	XConfigureEvent *ev = &e->xconfigure;
 	int dirty;
 
