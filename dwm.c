@@ -288,20 +288,18 @@ static xcb_connection_t *xcon;
 static int enablegaps = 1;
 #endif // PERTAG_PATCH
 
-static const int numtags = NUMTAGS;
-
 struct Pertag {
 	unsigned int curtag, prevtag; /* current and previous tag */
-	int nmasters[numtags + 1]; /* number of windows in master area */
-	float mfacts[numtags + 1]; /* mfacts per tag */
-	unsigned int sellts[numtags + 1]; /* selected layouts */
-	const Layout *ltidxs[numtags + 1][2]; /* matrix of tags and layouts indexes  */
-	int showbars[numtags + 1]; /* display bar for the current tag */
-	int enablegaps[numtags + 1]; /* enable gaps for the current tag */
+	int nmasters[NUMTAGS + 1]; /* number of windows in master area */
+	float mfacts[NUMTAGS + 1]; /* mfacts per tag */
+	unsigned int sellts[NUMTAGS + 1]; /* selected layouts */
+	const Layout *ltidxs[NUMTAGS + 1][2]; /* matrix of tags and layouts indexes  */
+	int showbars[NUMTAGS + 1]; /* display bar for the current tag */
+	int enablegaps[NUMTAGS + 1]; /* enable gaps for the current tag */
 };
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
-struct NumTags { char limitexceeded[numtags > 31 ? -1 : 1]; };
+struct NumTags { char limitexceeded[NUMTAGS > 31 ? -1 : 1]; };
 
 /* dwm will keep pid's of processes from autostart array and kill them at quit */
 static pid_t *autostart_pids;
@@ -737,7 +735,7 @@ createmon(void)
 	m->pertag = ecalloc(1, sizeof(Pertag));
 	m->pertag->curtag = m->pertag->prevtag = 1;
 
-	for (i = 0; i <= numtags i++) {
+	for (i = 0; i <= NUMTAGS i++) {
 		m->pertag->nmasters[i] = m->nmaster;
 		m->pertag->mfacts[i] = m->mfact;
 
@@ -1904,11 +1902,11 @@ shiftview(const Arg *arg) {
 
 	if (arg->i > 0) // left circular shift
 		shifted.ui = (selmon->tagset[selmon->seltags] << arg->i)
-		   | (selmon->tagset[selmon->seltags] >> (numtags - arg->i));
+		   | (selmon->tagset[selmon->seltags] >> (NUMTAGS - arg->i));
 
 	else // right circular shift
 		shifted.ui = selmon->tagset[selmon->seltags] >> (- arg->i)
-		   | selmon->tagset[selmon->seltags] << (numtags + arg->i);
+		   | selmon->tagset[selmon->seltags] << (NUMTAGS + arg->i);
 
 	view(&shifted);
 }
