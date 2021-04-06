@@ -104,4 +104,5 @@ static Signal signals[] = {
 	{ "incrgaps",    		incrgaps },
 	{ "defaultgaps",    defaultgaps },
 	{ "togglegaps",     togglegaps },
+	{ "focusmaster",    focusmaster },
 };
