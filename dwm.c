@@ -57,7 +57,6 @@
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
-#define TAGMASK                 ((1 << NUMTAGS)) - 1)
 #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
 
 #define MWM_HINTS_FLAGS_FIELD       0
@@ -282,6 +281,9 @@ static xcb_connection_t *xcon;
 
 /* configuration, allows nested code to access above variables */
 #include "config.h"
+
+/* Moved macro, needs value from config */
+#define TAGMASK                 ((1 << NUMTAGS)) - 1)
 
 /* Settings for vanitygaps */
 #if !PERTAG_PATCH
