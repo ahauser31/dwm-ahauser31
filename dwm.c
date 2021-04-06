@@ -1592,8 +1592,14 @@ togglescratch(const Arg *arg)
 {
 	Client *c;
 	Arg sparg = {.v = scratchpads[arg->ui].cmd};
+	XClassHint ch = { NULL, NULL };
 
-	for (c = selmon->clients; c && !(strcmp(c->name, scratchpads[arg->ui].name) == 0); c = c->next);
+	for (c = selmon->clients; c; c = c->next) {
+		XGetClassHint(dpy, c->win, &ch);
+		instance = ch.res_name  ? ch.res_name  : broken;
+		if (strcmp(instance, scratchpads[arg->ui].name) == 0)
+			break;
+	}
 	if (c) {
 		/* scratchpad found, toggle it */
 		c->tags = 0;
