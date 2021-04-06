@@ -1593,6 +1593,7 @@ togglescratch(const Arg *arg)
 	Client *c;
 	Arg sparg = {.v = scratchpads[arg->ui].cmd};
 	XClassHint ch = { NULL, NULL };
+	const char *instance;
 
 	for (c = selmon->clients; c; c = c->next) {
 		XGetClassHint(dpy, c->win, &ch);
