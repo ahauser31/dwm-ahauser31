@@ -24,6 +24,10 @@ super + e
 # Audio song control: play, stop/pause, next, prev
 # Screenshot fullscreen / area and save / copy clipboard
 
+# Force new wallpaper
+super + w
+	/bin/sh -c $HOME/.local/scripts/wallpaper_reddit -f | xargs hsetroot -cover
+
 
 ## dwm
 
