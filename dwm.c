@@ -212,6 +212,7 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void togglescratch(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
@@ -1720,6 +1721,35 @@ togglefloating(const Arg *arg)
 		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
 			selmon->sel->w, selmon->sel->h, 0);
 	arrange(selmon);
+}
+
+void
+togglescratch(const Arg *arg)
+{
+	Client *c;
+	Arg sparg = {.v = scratchpads[arg->ui].cmd};
+	XClassHint ch = { NULL, NULL };
+	const char *instance;
+
+	for (c = selmon->clients; c; c = c->next) {
+		XGetClassHint(dpy, c->win, &ch);
+		instance = ch.res_name  ? ch.res_name  : broken;
+		if (strcmp(instance, scratchpads[arg->ui].name) == 0)
+			break;
+	}
+	if (c) {
+		/* scratchpad found, toggle it */
+		c->tags = 0;
+		c->issticky = !c->issticky;
+
+		if(c->issticky)
+			focus(c);
+
+		arrange(selmon);
+	} else {
+		/* scratchpad not found, create it */
+		spawn(&sparg);
+	}
 }
 
 void
