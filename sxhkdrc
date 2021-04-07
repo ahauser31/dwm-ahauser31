@@ -1,3 +1,9 @@
+### Keys used:
+### SUPER: b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, RETURN, SPACE, `, 1-0
+### SUPER + SHIFT: f, q, r, s, w, 1-0
+### SUPER + CTRL: b, 1-9
+### SUPER + SHIFT + CTRL: 1-9
+
 ## application spawning
 
 # Launch rofi
@@ -25,7 +31,7 @@ super + e
 # Screenshot fullscreen / area and save / copy clipboard
 
 # Force new wallpaper
-super + w
+super + shift + w
 	wallpaper_reddit -f | xargs hsetroot -cover
 
 
