@@ -11,6 +11,7 @@ The [dwm](https://dwm.suckless.org/) window manager with all the patches applied
 - dwmc (extended for my config)
 - emoji (own patch to allow colored emoji in dwm)
 - fakefullscreen
+- fixborders
 - focusmaster
 - focusonclick
 - nokeyboardmousebar (own patch, strips out all support for keybindings and mousebindings apart from click focus and removes the in-built bar)
