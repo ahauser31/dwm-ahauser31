@@ -12,7 +12,6 @@ static const unsigned int gappov    = 20;       /* vert outer gap between window
 static       int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const int focusonwheel       = 0;
-static const char *fonts[]          = { "monospace:size=10" };
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";

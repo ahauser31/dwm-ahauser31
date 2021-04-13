@@ -58,7 +58,6 @@
 #define TAGMASK                 ((1 << NUMTAGS) - 1)
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
-#define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
 
 #define MWM_HINTS_FLAGS_FIELD       0
 #define MWM_HINTS_DECORATIONS_FIELD 2
@@ -1407,15 +1406,12 @@ setup(void)
 	sigchld(0);
 
 	/* init screen */
+	bh = 0;
 	screen = DefaultScreen(dpy);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
 	root = RootWindow(dpy, screen);
 	drw = drw_create(dpy, screen, root, sw, sh);
-	if (!drw_fontset_create(drw, fonts, LENGTH(fonts)))
-		die("no fonts could be loaded.");
-	lrpad = drw->fonts->h;
-	bh = drw->fonts->h + 2; /* Leave for now, as a sensible default */
 	updategeom();
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
