@@ -65,6 +65,7 @@
 #define MWM_DECOR_ALL               (1 << 0)
 #define MWM_DECOR_BORDER            (1 << 1)
 #define MWM_DECOR_TITLE             (1 << 3)
+#define MINHEIGHT                   10
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
@@ -196,6 +197,7 @@ static void run(void);
 static void scan(void);
 static int sendevent(Client *c, Atom proto);
 static void sendmon(Client *c, Monitor *m);
+static void setbarheight(const Arg *arg);
 static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
@@ -257,8 +259,7 @@ static void setgaps(int oh, int ov, int ih, int iv);
 static const char broken[] = "broken";
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
-static int bh;			 /* bar variables TODO: set them via signals from bar app */
-static int lrpad;            /* sum of left and right padding for text */
+static int bh;			 				 /* bar height */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static void (*handler[LASTEvent]) (XEvent *) = {
 	[ButtonPress] = buttonpress,
@@ -296,7 +297,7 @@ struct Pertag {
 	float mfacts[NUMTAGS + 1]; /* mfacts per tag */
 	unsigned int sellts[NUMTAGS + 1]; /* selected layouts */
 	const Layout *ltidxs[NUMTAGS + 1][2]; /* matrix of tags and layouts indexes  */
-	int showbars[NUMTAGS + 1]; /* display bar for the current tag */
+	/*int showbars[NUMTAGS + 1];*/ /* display bar for the current tag */
 	int enablegaps[NUMTAGS + 1]; /* enable gaps for the current tag */
 };
 
@@ -403,10 +404,10 @@ applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact)
 		if (*y + *h + 2 * c->bw <= m->wy)
 			*y = m->wy;
 	}
-	if (*h < bh)
-		*h = bh;
-	if (*w < bh)
-		*w = bh;
+	if (*h < MINHEIGHT)
+		*h = MINHEIGHT;
+	if (*w < MINHEIGHT)
+		*w = MINHEIGHT;
 	if (resizehints || c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
 		/* see last two sentences in ICCCM 4.1.2.3 */
 		baseismin = c->basew == c->minw && c->baseh == c->minh;
@@ -726,7 +727,7 @@ createmon(void)
 	m->tagset[0] = m->tagset[1] = 1;
 	m->mfact = mfact;
 	m->nmaster = nmaster;
-	m->showbar = 1;
+	m->showbar = 0;
 	m->gappih = gappih;
 	m->gappiv = gappiv;
 	m->gappoh = gappoh;
@@ -746,7 +747,7 @@ createmon(void)
 		m->pertag->ltidxs[i][1] = m->lt[1];
 		m->pertag->sellts[i] = m->sellt;
 
-		m->pertag->showbars[i] = m->showbar;
+		/* m->pertag->showbars[i] = m->showbar; */
 		m->pertag->enablegaps[i] = 1;		/* gaps enabled by default */
 	}
 
@@ -1309,6 +1310,24 @@ sendmon(Client *c, Monitor *m)
 }
 
 void
+setbarheight(const Arg *arg)
+{
+	Monitor* m;
+	bh = arg->i;
+
+	for (m = mons; m; m = m->next) {
+		m->wh = m->mh - bh;
+		m->wy = m->my + bh;
+		m->showbar = bh ? 1 : 0;
+	}
+	
+	/* Hack needed to not break dwm */
+	bh = bh ? bh : MINHEIGHT;
+
+	arrange(NULL);
+}
+
+void
 setclientstate(Client *c, long state)
 {
 	long data[] = { state, None };
@@ -1406,7 +1425,7 @@ setup(void)
 	sigchld(0);
 
 	/* init screen */
-	bh = 0;
+	bh = MINHEIGHT;
 	screen = DefaultScreen(dpy);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);

@@ -125,5 +125,6 @@ static Signal signals[] = {
 	{ "shiftview",      shiftview },
 	{ "togglesticky",   togglesticky },
 	{ "togglescratch",  togglescratch },
+	{ "setbarheight",   setbarheight},
 };
 
