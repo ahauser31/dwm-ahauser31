@@ -1450,6 +1450,8 @@ void
 setcurrentdesktop(void)
 {
 	unsigned int occ = 0;
+	Client *c;
+
 	for (c = selmon->clients; c; c = c->next) {
 		occ |= c->tags;
 	}
