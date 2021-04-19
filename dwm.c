@@ -57,7 +57,7 @@
 #define ISVISIBLE(C)            ((C->tags & C->mon->tagset[C->mon->seltags]) || C->issticky)
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define TAGMASK                 ((1 << NUMTAGS) - 1)
-#define CURRENTDESKTOPMASK      ((TAGMASK << 16) || TAGMASK)
+#define CURRENTDESKTOPMASK      ((TAGMASK << 16) | TAGMASK)
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
 
@@ -1354,7 +1354,7 @@ setcurrentdesktop(void)
 	for (c = selmon->clients; c; c = c->next) {
 		occ |= c->tags;
 	}
-	long data[] = { selmon->tagset[selmon->seltags] || (occ << 16), (long)time(NULL)};
+	long data[] = { selmon->tagset[selmon->seltags] | (occ << 16), (long)time(NULL)};
 	XChangeProperty(dpy, root, netatom[NetCurrentDesktop], XA_CARDINAL, 32, PropModeReplace, (unsigned char *)data, 2);
 }
 
@@ -1460,7 +1460,6 @@ setup(void)
 	sh = DisplayHeight(dpy, screen);
 	root = RootWindow(dpy, screen);
 	drw = drw_create(dpy, screen, root, sw, sh);
-	setnumdesktops();
 	updategeom();
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
@@ -1500,6 +1499,8 @@ setup(void)
 	XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32,
 		PropModeReplace, (unsigned char *) netatom, NetLast);
 	XDeleteProperty(dpy, root, netatom[NetClientList]);
+	setnumdesktops();
+	setcurrentdesktop();
 	/* select events */
 	wa.cursor = cursor[CurNormal]->cursor;
 	wa.event_mask = SubstructureRedirectMask|SubstructureNotifyMask
@@ -1843,7 +1844,8 @@ updategeom(void)
 				if (m == selmon)
 				{
 					selmon = mons;
-					setcurrentdesktop();
+					if (netatom[NetCurrentDesktop])
+						setcurrentdesktop();
 				}
 				cleanupmon(m);
 			}
@@ -1863,7 +1865,8 @@ updategeom(void)
 	if (dirty) {
 		selmon = mons;
 		selmon = wintomon(root);
-		setcurrentdesktop();
+		if (netatom[NetCurrentDesktop])
+			setcurrentdesktop();
 	}
 	return dirty;
 }
