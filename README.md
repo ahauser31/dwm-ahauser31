@@ -9,6 +9,7 @@ The [dwm](https://dwm.suckless.org/) window manager with all the patches applied
 - coolautostart (good enough autostart method for me)
 - decorationhints
 - dwmc (extended for my config)
+- ewmh (own patch to set extended window manager hints for bar support)
 - emoji (own patch to allow colored emoji in dwm)
 - fakefullscreen
 - fixborders
