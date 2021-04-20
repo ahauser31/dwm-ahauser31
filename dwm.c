@@ -51,8 +51,9 @@
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
-#define TAGMASK                 ((1 << LENGTH(tags)) - 1)
-#define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
+#define TAGMASK                 ((1 << NUMTAGS) - 1)
+
+#define MINHEIGHT                   10
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
@@ -140,7 +141,6 @@ static void destroynotify(XEvent *e);
 static void detach(Client *c);
 static void detachstack(Client *c);
 static Monitor *dirtomon(int dir);
-static void enternotify(XEvent *e);
 static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
@@ -154,7 +154,6 @@ static void killclient(const Arg *arg);
 static void manage(Window w, XWindowAttributes *wa);
 static void maprequest(XEvent *e);
 static void monocle(Monitor *m);
-static void motionnotify(XEvent *e);
 static Client *nexttiled(Client *c);
 static void pop(Client *);
 static void propertynotify(XEvent *e);
@@ -186,7 +185,6 @@ static void toggleview(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
 static void unmanage(Client *c, int destroyed);
 static void unmapnotify(XEvent *e);
-static void updatebarpos(Monitor *m);
 static void updateclientlist(void);
 static int updategeom(void);
 static void updatesizehints(Client *c);
@@ -203,11 +201,8 @@ static void zoom(const Arg *arg);
 
 /* variables */
 static const char broken[] = "broken";
-static char stext[256];
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
-static int bh, showbar;			 /* bar variables TODO: set them via signals from bar app */
-static int lrpad;            /* sum of left and right padding for text */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static void (*handler[LASTEvent]) (XEvent *) = {
 	[ButtonPress] = buttonpress,
@@ -215,10 +210,8 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 	[ConfigureRequest] = configurerequest,
 	[ConfigureNotify] = configurenotify,
 	[DestroyNotify] = destroynotify,
-	[EnterNotify] = enternotify,
 	[FocusIn] = focusin,
 	[MapRequest] = maprequest,
-	[MotionNotify] = motionnotify,
 	[PropertyNotify] = propertynotify,
 	[UnmapNotify] = unmapnotify
 };
@@ -235,7 +228,7 @@ static Window root, wmcheckwin;
 #include "config.h"
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
-struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
+struct NumTags { char limitexceeded[NUMTAGS > 31 ? -1 : 1]; };
 
 /* function implementations */
 void
@@ -302,10 +295,10 @@ applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact)
 		if (*y + *h + 2 * c->bw <= m->wy)
 			*y = m->wy;
 	}
-	if (*h < bh)
-		*h = bh;
-	if (*w < bh)
-		*w = bh;
+	if (*h < MINHEIGHT)
+		*h = MINHEIGHT;
+	if (*w < MINHEIGHT)
+		*w = MINHEIGHT;
 	if (resizehints || c->isfloating || !c->mon->lt[c->mon->sellt]->arrange) {
 		/* see last two sentences in ICCCM 4.1.2.3 */
 		baseismin = c->basew == c->minw && c->baseh == c->minh;
@@ -501,7 +494,6 @@ configurenotify(XEvent *e)
 		sw = ev->width;
 		sh = ev->height;
 		if (updategeom() || dirty) {
-			drw_resize(drw, sw, bh);
 			for (m = mons; m; m = m->next) {
 				for (c = m->clients; c; c = c->next)
 					if (c->isfullscreen)
@@ -627,25 +619,6 @@ dirtomon(int dir)
 	else
 		for (m = mons; m->next != selmon; m = m->next);
 	return m;
-}
-
-void
-enternotify(XEvent *e)
-{
-	Client *c;
-	Monitor *m;
-	XCrossingEvent *ev = &e->xcrossing;
-
-	if ((ev->mode != NotifyNormal || ev->detail == NotifyInferior) && ev->window != root)
-		return;
-	c = wintoclient(ev->window);
-	m = c ? c->mon : wintomon(ev->window);
-	if (m != selmon) {
-		unfocus(selmon->sel, 1);
-		selmon = m;
-	} else if (!c || c == selmon->sel)
-		return;
-	focus(c);
 }
 
 void
@@ -856,9 +829,7 @@ manage(Window w, XWindowAttributes *wa)
 	if (c->y + HEIGHT(c) > c->mon->my + c->mon->mh)
 		c->y = c->mon->my + c->mon->mh - HEIGHT(c);
 	c->x = MAX(c->x, c->mon->mx);
-	/* only fix client y-offset, if the client center might cover the bar */
-	c->y = MAX(c->y, ((c->mon->showbar) && (c->x + (c->w / 2) >= c->mon->wx)
-		&& (c->x + (c->w / 2) < c->mon->wx + c->mon->ww)) ? bh : c->mon->my);
+	c->y =  c->mon->my;
 	c->bw = borderpx;
 
 	wc.border_width = c->bw;
@@ -916,23 +887,6 @@ monocle(Monitor *m)
 		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
 		resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
-}
-
-void
-motionnotify(XEvent *e)
-{
-	static Monitor *mon = NULL;
-	Monitor *m;
-	XMotionEvent *ev = &e->xmotion;
-
-	if (ev->window != root)
-		return;
-	if ((m = recttomon(ev->x_root, ev->y_root, 1, 1)) != mon && mon) {
-		unfocus(selmon->sel, 1);
-		selmon = m;
-		focus(NULL);
-	}
-	mon = m;
 }
 
 Client *
@@ -1219,10 +1173,6 @@ setup(void)
 	sh = DisplayHeight(dpy, screen);
 	root = RootWindow(dpy, screen);
 	drw = drw_create(dpy, screen, root, sw, sh);
-	if (!drw_fontset_create(drw, fonts, LENGTH(fonts)))
-		die("no fonts could be loaded.");
-	lrpad = drw->fonts->h;
-	bh = drw->fonts->h + 2; /* Leave for now, as a sensible default */
 	updategeom();
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
@@ -1466,17 +1416,6 @@ unmapnotify(XEvent *e)
 }
 
 void
-updatebarpos(Monitor *m)
-{
-	m->wy = m->my;
-	m->wh = m->mh;
-	if (m->showbar) {
-		m->wh -= bh;
-		m->wy = m->wy + bh;
-	}
-}
-
-void
 updateclientlist()
 {
 	Client *c;
@@ -1530,7 +1469,6 @@ updategeom(void)
 					m->my = m->wy = unique[i].y_org;
 					m->mw = m->ww = unique[i].width;
 					m->mh = m->wh = unique[i].height;
-					updatebarpos(m);
 				}
 		} else { /* less monitors available nn < n */
 			for (i = nn; i < n; i++) {
@@ -1558,7 +1496,6 @@ updategeom(void)
 			dirty = 1;
 			mons->mw = mons->ww = sw;
 			mons->mh = mons->wh = sh;
-			updatebarpos(mons);
 		}
 	}
 	if (dirty) {
