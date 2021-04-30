@@ -74,7 +74,7 @@ enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
 enum { SchemeNorm, SchemeSel }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
-       NetWMWindowTypeDialog, NetClientList, NetNumberOfDesktops, NetCurrentDesktop, NetLast }; /* EWMH atoms */
+       NetWMWindowTypeDialog, NetClientList, NetNumberOfDesktops, NetCurrentDesktop, NetShowingDesktop, NetLast }; /* EWMH atoms */
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
        ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
@@ -207,6 +207,7 @@ static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setnumdesktops(void);
+static void setshowingdesktop(void);
 static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
@@ -1419,6 +1420,9 @@ setlayout(const Arg *arg)
 	strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol, sizeof selmon->ltsymbol);
 	if (selmon->sel)
 		arrange(selmon);
+
+	if (netatom[NetShowingDesktop])
+		setshowingdesktop();
 }
 
 /* arg > 1.0 will set mfact absolutely */
@@ -1441,6 +1445,19 @@ setnumdesktops(void)
 {
 	long data[] = { CURRENTDESKTOPMASK };
 	XChangeProperty(dpy, root, netatom[NetNumberOfDesktops], XA_CARDINAL, 32, PropModeReplace, (unsigned char *)data, 1);
+}
+
+void
+setshowingdesktop(void)
+{
+	Layout *l;
+	long i;
+
+	for (i = 0, l = (Layout *)layouts; l != selmon->lt[selmon->sellt] && i <= LENGTH(layouts); l++, i++);
+	if (i < LENGTH(layouts)) {
+		long data[] = { 0, i};
+		XChangeProperty(dpy, root, netatom[NetShowingDesktop], XA_CARDINAL, 32, PropModeReplace, (unsigned char *)data, 2)
+	}
 }
 
 void
@@ -1478,6 +1495,7 @@ setup(void)
 	netatom[NetClientList] = XInternAtom(dpy, "_NET_CLIENT_LIST", False);
 	netatom[NetNumberOfDesktops] = XInternAtom(dpy, "_NET_NUMBER_OF_DESKTOPS", False);
 	netatom[NetCurrentDesktop] = XInternAtom(dpy, "_NET_CURRENT_DESKTOP", False);
+	netatom[NetShowingDesktop] = XInternAtom(dpy, "_NET_SHOWING_DESKTOP", False);
 	motifatom = XInternAtom(dpy, "_MOTIF_WM_HINTS", False);
 	/* init cursors */
 	cursor[CurNormal] = drw_cur_create(drw, XC_left_ptr);
@@ -1501,6 +1519,7 @@ setup(void)
 	XDeleteProperty(dpy, root, netatom[NetClientList]);
 	setnumdesktops();
 	setcurrentdesktop();
+	setshowingdesktop();
 	/* select events */
 	wa.cursor = cursor[CurNormal]->cursor;
 	wa.event_mask = SubstructureRedirectMask|SubstructureNotifyMask
