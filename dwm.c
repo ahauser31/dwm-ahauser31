@@ -1456,7 +1456,7 @@ setshowingdesktop(void)
 	for (i = 0, l = (Layout *)layouts; l != selmon->lt[selmon->sellt] && i <= LENGTH(layouts); l++, i++);
 	if (i < LENGTH(layouts)) {
 		long data[] = { 0, i};
-		XChangeProperty(dpy, root, netatom[NetShowingDesktop], XA_CARDINAL, 32, PropModeReplace, (unsigned char *)data, 2)
+		XChangeProperty(dpy, root, netatom[NetShowingDesktop], XA_CARDINAL, 32, PropModeReplace, (unsigned char *)data, 2);
 	}
 }
 
