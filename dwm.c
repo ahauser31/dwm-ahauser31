@@ -600,6 +600,9 @@ cleanup(void)
 	XSync(dpy, False);
 	XSetInputFocus(dpy, PointerRoot, RevertToPointerRoot, CurrentTime);
 	XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
+	XDeleteProperty(dpy, root, netatom[NetShowingDesktop]);
+	XDeleteProperty(dpy, root, netatom[NetCurrentDesktop]);
+	XDeleteProperty(dpy, root, netatom[NetNumberOfDesktops]);
 }
 
 void
