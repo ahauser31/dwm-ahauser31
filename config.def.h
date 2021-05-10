@@ -24,14 +24,25 @@ static const char *colors[][3]      = {
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 	[SchemeStatus]  = { col_gray3, col_gray1,  "#000000"  }, // Statusbar right {text,background,not used but cannot be empty}
-	[SchemeTagsSel]  = { col_gray4, col_cyan,  "#000000"  }, // Tagbar left selected {text,background,not used but cannot be empty}
-	[SchemeTagsNorm]  = { col_gray3, col_gray1,  "#000000"  }, // Tagbar left unselected {text,background,not used but cannot be empty}
 	[SchemeInfoSel]  = { col_gray4, col_cyan,  "#000000"  }, // infobar middle  selected {text,background,not used but cannot be empty}
 	[SchemeInfoNorm]  = { col_gray3, col_gray1,  "#000000"  }, // infobar middle  unselected {text,background,not used but cannot be empty}
 };
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
+static const char *tagscolors[][4] = {
+	/* fg        bg         fg_sel     bg_sel   */
+	{ "#ff0000", col_gray1, col_gray4, col_cyan },
+	{ "#ff7f00", col_gray1, col_gray4, col_cyan },
+	{ "#ffff00", col_gray1, col_gray4, col_cyan },
+	{ "#00ff00", col_gray1, col_gray4, col_cyan },
+	{ "#0000ff", col_gray1, col_gray4, col_cyan },
+	{ "#4b0082", col_gray1, col_gray4, col_cyan },
+	{ "#9400d3", col_gray1, col_gray4, col_cyan },
+	{ "#ff00ff", col_gray1, col_gray4, col_cyan },
+	{ "#dddddd", col_gray1, col_gray4, col_cyan },
+};
 
 static const Rule rules[] = {
 	/* xprop(1):

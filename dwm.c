@@ -60,7 +60,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeStatus, SchemeTagsSel, SchemeTagsNorm, SchemeInfoSel, SchemeInfoNorm }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeStatus, SchemeInfoSel, SchemeInfoNorm }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -282,6 +282,7 @@ static Atom wmatom[WMLast], netatom[NetLast];
 static int running = 1;
 static Cur *cursor[CurLast];
 static Clr **scheme;
+static Clr **tagsscheme;
 static Display *dpy;
 static Drw *drw;
 static Monitor *mons, *selmon;
@@ -530,6 +531,8 @@ cleanup(void)
 		drw_cur_free(drw, cursor[i]);
 	for (i = 0; i < LENGTH(colors) + 1; i++)
 		free(scheme[i]);
+	for (i = 0; i < LENGTH(tagscolors); i++)
+		free(tagsscheme[i]);
 	XDestroyWindow(dpy, wmcheckwin);
 	drw_free(drw);
 	XSync(dpy, False);
@@ -762,16 +765,26 @@ drawbar(Monitor *m)
 	x = 0;
 	for (i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
-		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeTagsSel : SchemeTagsNorm]);
+		/* set the scheme colors of drw directly as the tagsschemes don't follow the regular scheme layout */
+		if (m->tagset[m->seltags] & 1 << i) {
+			/* Tag active */
+			drw->scheme[ColFg] = tagsscheme[i][2];
+			drw->scheme[ColBg] = tagsscheme[i][3];
+		} else {
+			/* Tag not active */
+			drw->scheme[ColFg] = tagsscheme[i][0];
+			drw->scheme[ColBg] = tagsscheme[i][1];
+		}
 		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
-		if (occ & 1 << i)
-			drw_rect(drw, x + boxs, boxs, boxw, boxw,
-				m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
-				urg & 1 << i);
+		/* Uncomment the following lines for the small square "occupied" indicator of the tags */
+		/* if (occ & 1 << i) */
+			/* drw_rect(drw, x + boxs, boxs, boxw, boxw, */
+				/* m == selmon && selmon->sel && selmon->sel->tags & 1 << i, */
+				/* urg & 1 << i); */
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
-	drw_setscheme(drw, scheme[SchemeTagsNorm]);
+	drw_setscheme(drw, scheme[SchemeNorm]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
 
 	if ((w = m->ww - tw - x) > bh) {
@@ -1885,6 +1898,10 @@ setup(void)
 	scheme[LENGTH(colors)] = drw_scm_create(drw, colors[0], 3);
 	for (i = 0; i < LENGTH(colors); i++)
 		scheme[i] = drw_scm_create(drw, colors[i], 3);
+	/* init tag appearance */
+	tagsscheme = ecalloc(LENGTH(tagscolors), sizeof(Clr *));
+	for (i = 0; i < LENGTH(tagscolors); i++)
+		tagsscheme[i] = drw_scm_create(drw, tagscolors[i], 4);
 	/* init bars */
 	updatebars();
 	updatestatus();
